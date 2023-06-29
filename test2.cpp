@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
     end= std::chrono::steady_clock::now();
     std::cout << "Time difference Setup = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count()/1000. <<std::endl;
     Eigen::MatrixXf mF;
-    exit(-1);
+//    exit(-1);
 
     // Trackbar
     DoubleTrackManager trackManager;
@@ -129,6 +129,7 @@ int main(int argc, char *argv[])
     std::cout << "Time difference Setup = " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count()/1000. <<std::endl;
     std::shared_ptr<WObject> wObject1 = std::make_shared<WObject>();
     //wObject1->loadOBJFile("/home/raaj/project/","hello_smpl.obj","");
+    wObject1->loadOBJFile("/work/codes/videoavatars/output","consensus.obj","");
     wObject1->loadEigenData(mvTemp, mF);
     wObject1->print();
     render.addObject(wObject1);

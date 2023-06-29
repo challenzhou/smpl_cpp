@@ -837,7 +837,7 @@ bool WObject::releaseTexture( const std::string& filename )
 
 bool WObject::loadTexture( const std::string& filename, bool clamp )
 {
-    cv::Mat image = cv::imread(filename, CV_LOAD_IMAGE_COLOR);
+    cv::Mat image = cv::imread(filename, cv::IMREAD_COLOR);
     if(image.empty()){
         std::cout << "image empty" << std::endl;
         return false;

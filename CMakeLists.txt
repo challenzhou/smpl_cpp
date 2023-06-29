@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(project)
 
+
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
 CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
@@ -21,6 +22,10 @@ endif()
 add_definitions(-DCMAKE_CURRENT_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
 add_definitions(-DEIGEN_HAS_SFINAE)
 
+if (POLICY CMP0072)
+  set(OpenGL_GL_PREFERENCE LEGACY)
+endif()
+
 find_package(OpenCV REQUIRED)
 find_package(GLUT REQUIRED)
 find_package(OpenGL REQUIRED)
@@ -29,6 +34,9 @@ find_package(GLEW REQUIRED)
 find_package(OpenPose REQUIRED)
 find_package(CUDA REQUIRED)
 find_package(Caffe REQUIRED)
+FIND_PACKAGE(Boost 1.71 COMPONENTS program_options regex system thread filesystem REQUIRED)
+INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
+
 
 add_definitions(-DOPENPOSE_BINARY_DIR="${CMAKE_BINARY_DIR}")
 add_definitions(-DOPENPOSE_INSTALL_DIR="${CMAKE_INSTALL_PREFIX}")

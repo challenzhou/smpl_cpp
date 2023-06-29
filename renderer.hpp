@@ -25,6 +25,10 @@
 #include <mutex>
 #include <condition_variable>
 
+#include <opencv2/imgproc/imgproc_c.h>
+#include <opencv2/imgproc/types_c.h>
+#include <opencv2/highgui/highgui_c.h> 
+
 using namespace std;
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
 
@@ -389,7 +393,7 @@ public:
             // Work
             r.setCameraParams(manager->renderParams[id]);
             cv::Mat out = r.draw(*manager->renderDatas[id].first,*manager->renderDatas[id].second);
-            cv::cvtColor(out, out, CV_BGRA2GRAY);
+            cv::cvtColor(out, out, cv::COLOR_BGRA2GRAY);
             std::vector<std::vector<cv::Point>> contours;
             cv::Mat clone = out.clone();
             findContoursCV(clone, contours);
@@ -448,7 +452,7 @@ public:
     }
 
     static void findContoursCV(cv::Mat& img, cv::OutputArrayOfArrays _contours){
-        IplImage* iplImg = new IplImage(img);
+        IplImage* iplImg = new IplImage(cvIplImage(img));
         CvMemStorage *storage = cvCreateMemStorage(0);
         CvSeq *_ccontours = cvCreateSeq(0, sizeof(CvSeq), sizeof(CvPoint), storage);
         cvFindContours(iplImg, storage, &_ccontours, sizeof(CvContour), CV_RETR_LIST, CV_CHAIN_APPROX_NONE);

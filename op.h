@@ -32,13 +32,13 @@ public:
         caffe::Caffe::set_mode(caffe::Caffe::GPU);
         caffe::Caffe::SetDevice(0);
 
-        op::log("OpenPose Library Tutorial - Example 1.", op::Priority::High);
+        opLog("OpenPose Library Tutorial - Example 1.", op::Priority::High);
         // ------------------------- INITIALIZATION -------------------------
         // Step 1 - Set logging level
             // - 0 will output all the logging messages
             // - 255 will output nothing
         op::ConfigureLog::setPriorityThreshold((op::Priority)FLAGS_logging_level);
-        op::log("", op::Priority::Low, __LINE__, __FUNCTION__, __FILE__);
+        opLog("", op::Priority::Low, __LINE__, __FUNCTION__, __FILE__);
         // Step 2 - Read Google flags (user defined configuration)
         // outputSize
         const auto outputSize = op::flagsToPoint(FLAGS_output_resolution, "-1x-1");
@@ -53,9 +53,9 @@ public:
             op::error("Incompatible flag configuration: scale_gap must be greater than 0 or scale_number = 1.",
                       __LINE__, __FUNCTION__, __FILE__);
         // Logging
-        op::log("", op::Priority::Low, __LINE__, __FUNCTION__, __FILE__);
+        opLog("", op::Priority::Low, __LINE__, __FUNCTION__, __FILE__);
         // Step 3 - Initialize all required classes
-        scaleAndSizeExtractor = std::unique_ptr<op::ScaleAndSizeExtractor>(new op::ScaleAndSizeExtractor(netInputSize, outputSize, FLAGS_scale_number, FLAGS_scale_gap));
+        scaleAndSizeExtractor = std::unique_ptr<op::ScaleAndSizeExtractor>(new op::ScaleAndSizeExtractor(netInputSize, -1,  outputSize, FLAGS_scale_number, FLAGS_scale_gap));
 
         poseExtractorCaffe = std::unique_ptr<op::PoseExtractorCaffe>(new op::PoseExtractorCaffe{poseModel, FLAGS_model_folder, FLAGS_num_gpu_start});
 
@@ -84,13 +84,13 @@ public:
         std::tie(scaleInputToNetInputs, netInputSizes, scaleInputToOutput, outputResolution)
             = scaleAndSizeExtractor->extract(imageSize);
         // Step 3 - Format input image to OpenPose input and output formats
-        const auto netInputArray = cvMatToOpInput.createArray(inputImage, scaleInputToNetInputs, netInputSizes);
+        const auto netInputArray = cvMatToOpInput.createArray(OP_CV2OPMAT(inputImage), scaleInputToNetInputs, netInputSizes);
         // Step 4 - Estimate poseKeypoints
         poseExtractorCaffe->forwardPass(netInputArray, imageSize, scaleInputToNetInputs);
         const auto poseKeypoints = poseExtractorCaffe->getPoseKeypoints();
 
         if(display){
-            auto outputArray = cvMatToOpOutput.createArray(inputImage, scaleInputToOutput, outputResolution);
+            auto outputArray = cvMatToOpOutput.createArray(OP_CV2OPMAT(inputImage), scaleInputToOutput, outputResolution);
             // Step 5 - Render poseKeypoints
             poseRenderer->renderPose(outputArray, poseKeypoints, scaleInputToOutput);
             // Step 6 - OpenPose output format to cv::Mat
@@ -100,7 +100,7 @@ public:
             // Step 1 - Show results
             frameDisplayer->displayFrame(outputImage, 0); // Alternative: cv::imshow(outputImage) + cv::waitKey(0)
             // Step 2 - Logging information message
-            op::log("Example 1 successfully finished.", op::Priority::High);
+            opLog("Example 1 successfully finished.", op::Priority::High);
             // Return successful message
         }
 
